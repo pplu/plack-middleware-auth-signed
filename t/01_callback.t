@@ -8,8 +8,6 @@ use POSIX qw(strftime);
 
 use AWS::Signature4;
 
-$Plack::Test::Impl = "Server"; # to use LWP::Authen::Digest
-
 my $user_db = {
   ACCESS_KEY1 => {
     username => 'user1@domain1.com',
@@ -25,7 +23,7 @@ my $realm    = 'restricted area';
 
 my $app = sub { return [ 200, [ 'Content-Type' => 'text/plain' ], [ "Hello $_[0]->{REMOTE_USER}" ] ] };
 $app = builder {
-    enable 'Auth::Signed', get_aki => sub { use Data::Dumper; print STDERR "USER: $_[0]\n"; $user_db->{$_[0]} }, service_region => "foo", service_host => 'localhost';
+    enable 'Auth::Signed', get_aki => sub { $user_db->{$_[0]} }, service_region => "foo", service_host => 'localhost';
     $app;
 };
 
