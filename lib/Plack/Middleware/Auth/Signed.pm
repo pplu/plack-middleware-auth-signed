@@ -29,6 +29,7 @@ sub call {
 
     my $auth = $headers->header('authorization');
 
+    return $self->unauthorized if (not defined $auth);
     #AWS4-HMAC-SHA256 Credential=ACCESS_KEY1/20150428/us-east-1/s3/aws4_request, SignedHeaders=host;x-amz-date, Signature=75ca0
     my ($version, $credential, $signed_headers, $signature) = ($auth =~ m/^(.+?) Credential=(.+?), SignedHeaders=(.+?), Signature=(.+?)$/);
 
