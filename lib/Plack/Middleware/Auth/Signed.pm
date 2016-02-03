@@ -55,9 +55,9 @@ sub call {
         secret_key => $sk,
       );
 
-      my %h = @{ $req->headers->flatten };
-      delete $h{ Authorization };
-      delete $h{ 'Content-Length' };
+      my %req_headers = @{ $req->headers->flatten };
+      $req_headers{ lc($_) } = delete $req_headers{ $_ } for (keys %req_headers);
+      my %h = map { ($_ => $req_headers{$_}) } split /;/, $signed_headers;
       my $http_req = HTTP::Request->new($req->method, $req->uri, [ %h ], $req->content);
 
       $amz->from_http_request($http_req);
