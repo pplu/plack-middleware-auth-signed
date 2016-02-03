@@ -21,7 +21,7 @@ my $user_db = {
 
 my $app = sub { return [ 200, [ 'Content-Type' => 'text/plain' ], [ "Hello $_[0]->{REMOTE_USER}" ] ] };
 $app = builder {
-    enable 'Auth::Signed', get_aki => sub { $user_db->{$_[0]} }, service_region => "foo", service_host => 'localhost';
+    enable 'Auth::Signed', get_aki => sub { $user_db->{$_[0]} }, service_region => "us-east-1", service_host => 's3';
     $app;
 };
 

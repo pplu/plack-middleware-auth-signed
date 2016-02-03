@@ -50,9 +50,7 @@ sub call {
 
     foreach my $sk (@{ $user->{ secret_keys } }){
       my $amz = WebService::Amazon::Signature::v4->new(
-        #scope      => '20110909/us-east-1/host/aws4_request',
-        #scope      => "$date/" . $self->service_region . '/' . $self->service_host . '/aws4_request',
-        scope      => "$split_date/us-east-1/s3/aws4_request",
+        scope      => "$split_date/" . $self->service_region . '/' . $self->service_host . '/aws4_request',
         access_key => $aki,
         secret_key => $sk,
       );
