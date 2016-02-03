@@ -41,9 +41,8 @@ sub call {
     return $self->unauthorized if (not defined $got_signature or 
                                    not defined $aki or
                                    not defined $date);
-
     my $user = $self->get_aki->($aki, $env);
-    
+
     return $self->unauthorized if (not defined $user or 
                                    ref($user) ne 'HASH' or
                                    not defined $user->{ secret_keys } or
@@ -57,7 +56,13 @@ sub call {
         access_key => $aki,
         secret_key => $sk,
       );
-      $amz->from_http_request_with_headers($req, [ split /;/, $signed_headers ]);
+
+      my %h = @{ $req->headers->flatten };
+      delete $h{ Authorization };
+      delete $h{ 'Content-Length' };
+      my $http_req = HTTP::Request->new($req->method, $req->uri, [ %h ], $req->content);
+
+      $amz->from_http_request($http_req);
       my $desired_signature = $amz->calculate_signature;
 
       if ($desired_signature eq $auth){
